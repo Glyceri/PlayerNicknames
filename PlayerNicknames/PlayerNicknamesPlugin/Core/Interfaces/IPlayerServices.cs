@@ -1,4 +1,4 @@
-using SamplePlugin;
+using PlayerRenamer;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 

@@ -9,8 +9,10 @@ using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Serialization;
 using PlayerNicknames.PlayerNicknamesPlugin.Updating;
 using PlayerNicknames.PlayerNicknamesPlugin.Updating.Interfaces;
+using PlayerNicknames.PlayerNicknamesPlugin.Windowing;
+using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 
-namespace SamplePlugin;
+namespace PlayerRenamer;
 
 public sealed class PlayerNicknamesPlugin : IDalamudPlugin
 {
@@ -22,6 +24,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
     readonly IUserList UserList;
     readonly INameDatabase Database;
     readonly IUpdateHandler UpdateHandler;
+    readonly IWindowHandler WindowHandler;
 
     readonly SaveHandler SaveHandler;
 
@@ -37,7 +40,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
 
         UpdateHandler = new UpdateHandler(DalamudServices, PlayerServices, Database, UserList);
 
-
+        WindowHandler = new WindowHandler(DalamudServices, PlayerServices, Database, UserList, DirtyHandler);
 
 
 
@@ -52,5 +55,6 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
     {
         UpdateHandler?.Dispose();
         SaveHandler?.Dispose();
+        WindowHandler?.Dispose();
     }
 }

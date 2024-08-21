@@ -36,7 +36,7 @@ internal class NameDatabase : INameDatabase
             string customName = user.CustomName;
             if (customName.IsNullOrWhitespace()) continue;
 
-            entries.Add(new NameDatabaseEntry(PlayerServices, DirtyCaller, user.ContentID, user.Name, user.Homeworld, user.CustomName, true));
+            entries.Add(new NameDatabaseEntry(PlayerServices, DirtyCaller, user.ContentID, user.Name, user.Homeworld, user.CustomName));
         }
 
         _entries = entries;
@@ -54,7 +54,7 @@ internal class NameDatabase : INameDatabase
             return entry;
         }
 
-        INameDatabaseEntry newEntry = new NameDatabaseEntry(PlayerServices, DirtyCaller, contentID, "[UNKNOWN]", 0, null, false);
+        INameDatabaseEntry newEntry = new NameDatabaseEntry(PlayerServices, DirtyCaller, contentID, "[UNKNOWN]", 0, null);
         _entries.Add(newEntry);
         return newEntry;
     }

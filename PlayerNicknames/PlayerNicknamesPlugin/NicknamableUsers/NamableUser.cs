@@ -8,14 +8,14 @@ namespace PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers;
 
 internal unsafe class NamableUser : INamableUser
 {
-    public bool IsActive { get; }
-    public bool IsLocalPlayer { get; }
+    public bool IsActive => DatabaseEntry.IsActive;
+    public bool IsLocalPlayer { get; private set; }
 
-    public string Name { get; }
-    public ulong ContentID { get; }
-    public ushort Homeworld { get; }
-    public ulong ObjectID { get; }
-    public INameDatabaseEntry DatabaseEntry { get; }
+    public string Name { get; private set; }
+    public ulong ContentID { get; private set; }
+    public ushort Homeworld { get; private set; }
+    public ulong ObjectID { get; private set; }
+    public INameDatabaseEntry DatabaseEntry { get; private set; }
     public nint Address { get; private set; }
     public unsafe BattleChara* BattleChara { get; private set; }
     public string? CustomName => DatabaseEntry.ActiveEntry.GetName();
@@ -37,8 +37,6 @@ internal unsafe class NamableUser : INamableUser
         ObjectID = BattleChara->GetGameObjectId();
         DatabaseEntry = database.GetEntry(ContentID);
         DatabaseEntry.UpdateEntry(this);
-
-        if (IsLocalPlayer) DatabaseEntry.UpdateContentID(ContentID);
     }
 
     public void Set(Pointer<BattleChara> pointer)

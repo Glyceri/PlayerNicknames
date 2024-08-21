@@ -1,3 +1,4 @@
+using Dalamud.Utility;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
@@ -8,7 +9,7 @@ namespace PlayerNicknames.PlayerNicknamesPlugin.Database;
 
 internal class NameDatabaseEntry : INameDatabaseEntry
 {
-    public bool IsActive { get; private set; }
+    public bool IsActive => !ActiveEntry.GetName().IsNullOrWhitespace();
 
     public ulong ContentID { get; private set; }
     public string Name { get; private set; } = string.Empty;
@@ -19,14 +20,13 @@ internal class NameDatabaseEntry : INameDatabaseEntry
     readonly IPlayerServices PlayerServices;
     readonly IDirtyCaller DirtyCaller;
 
-    public NameDatabaseEntry(IPlayerServices playerServices, IDirtyCaller dirtyCaller, ulong contentID, string name, ushort homeworld, string? nickname, bool active)
+    public NameDatabaseEntry(IPlayerServices playerServices, IDirtyCaller dirtyCaller, ulong contentID, string name, ushort homeworld, string? nickname)
     {
         PlayerServices = playerServices;
         DirtyCaller = dirtyCaller;
 
         ContentID = contentID;
         ActiveEntry = new NameEntry(DirtyCaller, nickname);
-        IsActive = active;
 
         SetName(name);
         SetHomeworld(homeworld);
@@ -41,12 +41,6 @@ internal class NameDatabaseEntry : INameDatabaseEntry
     void SetName(string name)
     {
         Name = name;
-    }
-
-    public void UpdateContentID(ulong contentID, bool removeIPCStatus = false)
-    {
-        ContentID = contentID;
-        IsActive = true;
     }
 
     public void UpdateEntry(INamableUser namableUser)

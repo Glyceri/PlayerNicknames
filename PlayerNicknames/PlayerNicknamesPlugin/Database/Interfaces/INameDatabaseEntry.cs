@@ -14,7 +14,6 @@ internal interface INameDatabaseEntry
 
     INameEntry ActiveEntry { get; }
 
-    void UpdateContentID(ulong contentID, bool removeIPCStatus = false);
     void UpdateEntry(INamableUser pettableUser);
 
     SerializableUser SerializeEntry();

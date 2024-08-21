@@ -1,6 +1,6 @@
 ﻿using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
-using SamplePlugin;
+using PlayerRenamer;
 using System;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Serialization;

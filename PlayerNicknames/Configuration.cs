@@ -5,7 +5,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Serialization;
 using System;
 
-namespace SamplePlugin;
+namespace PlayerRenamer;
 
 [Serializable]
 internal class Configuration : IPluginConfiguration

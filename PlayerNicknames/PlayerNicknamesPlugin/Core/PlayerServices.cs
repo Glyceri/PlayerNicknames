@@ -1,6 +1,6 @@
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Wrappers;
-using SamplePlugin;
+using PlayerRenamer;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Core;
 
