@@ -30,7 +30,7 @@ internal class RenameWindow : PlayerWindow
 
     float BarHeight => 30 * ImGuiHelpers.GlobalScaleSafe;
 
-    public RenameWindow(in WindowHandler windowHandler, in DalamudServices dalamudServices, IPlayerServices playerServices, IUserList userList, IImageDatabase imageDatabase) : base(windowHandler, dalamudServices, playerServices.Configuration, "Player Rename Window", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+    public RenameWindow(in WindowHandler windowHandler, in DalamudServices dalamudServices, IPlayerServices playerServices, IUserList userList, IImageDatabase imageDatabase) : base(windowHandler, dalamudServices, playerServices.Configuration, "Player Rename Panel", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         UserList = userList;
         PlayerServices = playerServices;

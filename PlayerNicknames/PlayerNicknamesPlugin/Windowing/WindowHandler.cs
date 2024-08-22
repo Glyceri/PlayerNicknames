@@ -8,8 +8,8 @@ using PlayerNicknames.PlayerNicknamesPlugin.ImageDatabase.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
-using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 using System.Linq;
+using PetRenamer.PetNicknames.Windowing.Windows;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 
@@ -42,6 +42,8 @@ internal class WindowHandler : IWindowHandler
         DirtyListener.RegisterOnDirtyName(HandleDirty);
 
         DalamudServices.PlayerNicknamesPlugin.UiBuilder.Draw += Draw;
+        DalamudServices.PlayerNicknamesPlugin.UiBuilder.OpenMainUi += Open<RenameWindow>;
+        DalamudServices.PlayerNicknamesPlugin.UiBuilder.OpenConfigUi += Open<PlayerConfigWindow>;
 
         Register();
     }
@@ -49,8 +51,10 @@ internal class WindowHandler : IWindowHandler
     void Register()
     {
         AddWindow(new RenameWindow(this, DalamudServices, PlayerServices, UserList, ImageDatabase));
+        AddWindow(new PlayerListWindow(this, DalamudServices, PlayerServices, UserList, Database, ImageDatabase));
         AddWindow(new DevWindow(this, DalamudServices, PlayerServices.Configuration, UserList));
         AddWindow(new KofiWindow(this, DalamudServices, PlayerServices.Configuration));
+        AddWindow(new PlayerConfigWindow(this, DalamudServices, PlayerServices.Configuration));
     }
 
     void AddWindow(PlayerWindow window)

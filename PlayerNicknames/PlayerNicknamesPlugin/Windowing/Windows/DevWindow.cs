@@ -5,7 +5,6 @@ using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerRenamer;
 using System.Numerics;
 
-
 namespace PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 
 internal class DevWindow : PlayerWindow
@@ -17,11 +16,14 @@ internal class DevWindow : PlayerWindow
 
     readonly IUserList UserList;
 
-    public DevWindow(WindowHandler windowHandler, DalamudServices dalamudServices, Configuration configuration, IUserList userList) : base(windowHandler, dalamudServices, configuration, "Dev Window", ImGuiWindowFlags.None, true)
+    public DevWindow(WindowHandler windowHandler, DalamudServices dalamudServices, Configuration configuration, IUserList userList) : base(windowHandler, dalamudServices, configuration, "Developer Tools", ImGuiWindowFlags.None, true)
     {
         UserList = userList;
 
-        Open();
+        if (configuration.debugModeActive && configuration.openDebugWindowOnStart)
+        {
+            Open();
+        }
     }
 
     protected override void OnDraw()

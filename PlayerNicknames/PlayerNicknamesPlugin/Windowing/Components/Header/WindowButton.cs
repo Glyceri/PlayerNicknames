@@ -1,6 +1,5 @@
 ﻿using Dalamud.Interface;
 using ImGuiNET;
-using PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerRenamer;
 using System.Numerics;

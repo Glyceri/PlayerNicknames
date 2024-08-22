@@ -19,7 +19,7 @@ internal class KofiWindow : PlayerWindow
 
     float BarSize = 30 * ImGuiHelpers.GlobalScale;
 
-    public KofiWindow(in WindowHandler windowHandler, in DalamudServices dalamudServices, in Configuration configuration) : base(windowHandler, dalamudServices, configuration, "Kofi-Window", ImGuiWindowFlags.None)
+    public KofiWindow(in WindowHandler windowHandler, in DalamudServices dalamudServices, in Configuration configuration) : base(windowHandler, dalamudServices, configuration, "Kofi", ImGuiWindowFlags.None)
     {
         
     }

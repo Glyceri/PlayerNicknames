@@ -2,12 +2,10 @@
 using Dalamud.Interface.Utility;
 using ImGuiNET;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
-using PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
-using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Components;
-using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 using PlayerRenamer;
 using System.Numerics;
+using PetRenamer.PetNicknames.Windowing.Windows;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Windowing.Components.Header;
 
@@ -25,18 +23,22 @@ internal static class HeaderBar
         {
             HeaderBarWidth = 0;
 
-            WindowStruct<DevWindow> petDevWindow = new WindowStruct<DevWindow>(in windowHandler, in configuration, FontAwesomeIcon.Biohazard, "Pet Dev", configuration.debugModeActive);
+            WindowStruct<DevWindow> devWindow = new WindowStruct<DevWindow>(in windowHandler, in configuration, FontAwesomeIcon.Biohazard, "Pet Dev", configuration.debugModeActive);
             WindowStruct<KofiWindow> kofiWindow = new WindowStruct<KofiWindow>(in windowHandler, in configuration, FontAwesomeIcon.Coffee, "Kofi", configuration.showKofiButton && petWindow is not KofiWindow);
-            WindowStruct<RenameWindow> petRenameWindow = new WindowStruct<RenameWindow>(in windowHandler, in configuration, FontAwesomeIcon.PenSquare, "Nickname Window", petWindow is not RenameWindow || configuration.quickButtonsToggle);
+            WindowStruct<PlayerConfigWindow> playerConfigWindow = new WindowStruct<PlayerConfigWindow>(in windowHandler, in configuration, FontAwesomeIcon.Cogs, "Settings", petWindow is not PlayerConfigWindow || configuration.quickButtonsToggle);
+            WindowStruct<PlayerListWindow> playerListWindow = new WindowStruct<PlayerListWindow>(in windowHandler, in configuration, FontAwesomeIcon.List, "Player List", petWindow is not PlayerListWindow || configuration.quickButtonsToggle);
+            WindowStruct<RenameWindow> renameWindow = new WindowStruct<RenameWindow>(in windowHandler, in configuration, FontAwesomeIcon.PenSquare, "Nickname Window", petWindow is not RenameWindow || configuration.quickButtonsToggle);
 
             float availableWidth = ImGui.GetContentRegionAvail().X;
             availableWidth -= HeaderBarWidth;
 
             ImGui.SetCursorPos(ImGui.GetCursorPos() + new Vector2(availableWidth, 0));
 
-            petDevWindow.Draw();
+            devWindow.Draw();
             kofiWindow.Draw();
-            petRenameWindow.Draw();
+            playerConfigWindow.Draw();
+            playerListWindow.Draw();
+            renameWindow.Draw();
 
             Listbox.End();
         }
