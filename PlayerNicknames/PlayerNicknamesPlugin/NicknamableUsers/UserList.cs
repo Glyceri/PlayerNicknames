@@ -10,7 +10,7 @@ internal class UserList : IUserList
     public INamableUser?[] NamableUsers { get; set; } = new INamableUser?[NamableUsersArraySize];
     public INamableUser? LocalPlayer { get => NamableUsers[0]; }
 
-    public INamableUser? GetUser(ulong userId)
+    public INamableUser? GetUser(ulong userId, bool checkActive = false)
     {
         if (userId == 0) return null;
 
@@ -18,7 +18,7 @@ internal class UserList : IUserList
         {
             INamableUser? pUser = NamableUsers[i];
             if (pUser == null) continue;
-            if (!pUser.IsActive) continue;
+            if (!pUser.IsActive && checkActive) continue;
             if (pUser.ObjectID == userId) return pUser;
 
             return pUser;
@@ -26,7 +26,7 @@ internal class UserList : IUserList
         return null;
     }
 
-    public INamableUser? GetUser(string username)
+    public INamableUser? GetUser(string username, bool checkActive = false)
     {
         if (username.IsNullOrWhitespace()) return null;
 
@@ -34,7 +34,7 @@ internal class UserList : IUserList
         {
             INamableUser? pUser = NamableUsers[i];
             if (pUser == null) continue;
-            if (!pUser.IsActive) continue;
+            if (!pUser.IsActive && checkActive) continue;
             if (!string.Equals(pUser.Name, username, System.StringComparison.InvariantCultureIgnoreCase)) continue;
 
             return pUser;
@@ -42,14 +42,14 @@ internal class UserList : IUserList
         return null;
     }
 
-    public INamableUser? GetUser(nint user)
+    public INamableUser? GetUser(nint user, bool checkActive = false)
     {
         if (user == nint.Zero) return null;
         for (int i = 0; i < NamableUsersArraySize; i++)
         {
             INamableUser? pUser = NamableUsers[i];
             if (pUser == null) continue;
-            if (!pUser.IsActive) continue;
+            if (!pUser.IsActive && checkActive) continue;
             if (pUser.Address != user) continue;
 
             return pUser;

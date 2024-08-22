@@ -20,6 +20,10 @@ internal class Configuration : IPluginConfiguration
 
     public SerializableUser[]? SerializableUsers { get; set; } = null;
 
+
+    public bool useContextMenus = true;
+    public bool downloadProfilePictures = true;
+
     public void Initialise(IDalamudPluginInterface playerNicknamesPlugin, INameDatabase database)
     {
         PlayerNicknamesPlugin = playerNicknamesPlugin;
