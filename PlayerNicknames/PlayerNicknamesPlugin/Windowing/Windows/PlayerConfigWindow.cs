@@ -1,11 +1,10 @@
 ﻿using ImGuiNET;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
-using PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerRenamer;
 using System.Numerics;
 
-namespace PetRenamer.PetNicknames.Windowing.Windows;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 
 internal class PlayerConfigWindow : PlayerWindow
 {
@@ -14,7 +13,7 @@ internal class PlayerConfigWindow : PlayerWindow
     protected override Vector2 DefaultSize { get; } = new Vector2(400, 500);
     protected override bool HasTopBar { get; } = true;
 
-    public PlayerConfigWindow(in WindowHandler windowHandler, in DalamudServices dalamudServices, in Configuration configuration) : base(windowHandler, dalamudServices, configuration, "Pet Config Window", ImGuiWindowFlags.None) { }
+    public PlayerConfigWindow(in WindowHandler windowHandler, in DalamudServices dalamudServices, in Configuration configuration) : base(windowHandler, dalamudServices, configuration, "Player Settings", ImGuiWindowFlags.None) { }
 
     protected override void OnDraw()
     {

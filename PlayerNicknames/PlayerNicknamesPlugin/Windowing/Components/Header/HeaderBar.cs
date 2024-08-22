@@ -5,7 +5,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerRenamer;
 using System.Numerics;
-using PetRenamer.PetNicknames.Windowing.Windows;
+using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Windowing.Components.Header;
 

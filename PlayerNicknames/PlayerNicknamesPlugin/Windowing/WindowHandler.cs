@@ -9,7 +9,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using System.Linq;
-using PetRenamer.PetNicknames.Windowing.Windows;
+using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 

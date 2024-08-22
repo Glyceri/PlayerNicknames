@@ -16,6 +16,8 @@ using PlayerNicknames.PlayerNicknamesPlugin.Updating.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus;
+using PlayerNicknames.PlayerNicknamesPlugin.Commands;
+using PlayerNicknames.PlayerNicknamesPlugin.Commands.Interfaces;
 
 namespace PlayerRenamer;
 
@@ -31,8 +33,8 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
     readonly INameDatabase Database;
     readonly IUpdateHandler UpdateHandler;
     readonly IWindowHandler WindowHandler;
-    
 
+    readonly ICommandHandler CommandHandler;
     readonly LodestoneNetworker LodestoneNetworker;
     readonly ILodestoneNetworker LodestoneNetworkerInterface;
     readonly SaveHandler SaveHandler;
@@ -55,6 +57,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
         UpdateHandler = new UpdateHandler(DalamudServices, PlayerServices, Database, UserList, LodestoneNetworker, ImageDatabase);
         WindowHandler = new WindowHandler(DalamudServices, PlayerServices, Database, UserList, DirtyHandler, ImageDatabase);
 
+        CommandHandler = new CommandHandler(DalamudServices, PlayerServices.Configuration, WindowHandler);
         ContextMenu = new ContextMenuHandler(in DalamudServices, in PlayerServices, in UserList, in WindowHandler);
 
         PlayerServices.Configuration.Initialise(DalamudServices.PlayerNicknamesPlugin, Database);
@@ -63,6 +66,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
 
     public void Dispose()
     {
+        CommandHandler?.Dispose();
         ContextMenu?.Dispose();
         LodestoneNetworker?.Dispose();
         ImageDatabase?.Dispose();
