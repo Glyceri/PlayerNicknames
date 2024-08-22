@@ -58,7 +58,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
         WindowHandler = new WindowHandler(DalamudServices, PlayerServices, Database, UserList, DirtyHandler, ImageDatabase);
 
         CommandHandler = new CommandHandler(DalamudServices, PlayerServices.Configuration, WindowHandler);
-        ContextMenu = new ContextMenuHandler(in DalamudServices, in PlayerServices, in UserList, in WindowHandler);
+        ContextMenu = new ContextMenuHandler(in DalamudServices, in PlayerServices, in UserList, in WindowHandler, Database);
 
         PlayerServices.Configuration.Initialise(DalamudServices.PlayerNicknamesPlugin, Database);
         SaveHandler = new SaveHandler(PlayerServices.Configuration, DirtyHandler);

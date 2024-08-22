@@ -15,6 +15,8 @@ internal interface INameDatabaseEntry
     INameEntry ActiveEntry { get; }
 
     void UpdateEntry(INamableUser pettableUser);
+    void UpdateEntry(string username);
+    void UpdateEntry(string username, ushort homeworld);
 
     SerializableUser SerializeEntry();
 }

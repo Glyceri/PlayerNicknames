@@ -1,3 +1,5 @@
+using PetRenamer.PetNicknames.Services.ServiceWrappers;
+using PetRenamer.PetNicknames.Services.ServiceWrappers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Wrappers;
 using PlayerRenamer;
@@ -11,6 +13,7 @@ internal class PlayerServices : IPlayerServices
     public IPetLog PetLog { get; }
     public Configuration Configuration { get; }
     public ISheets Sheets { get; }
+    public IStringHelper StringHelper { get; }
 
     public PlayerServices(in DalamudServices services)
     {
@@ -18,6 +21,7 @@ internal class PlayerServices : IPlayerServices
 
         PetLog = new PetLogWrapper(DalamudServices.PluginLog);
         Sheets = new SheetsWrapper(DalamudServices);
+        StringHelper = new StringHelperWrapper(Sheets);
 
         Configuration = DalamudServices.PlayerNicknamesPlugin.GetPluginConfig() as Configuration ?? new Configuration();
     }

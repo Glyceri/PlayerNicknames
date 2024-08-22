@@ -2,7 +2,6 @@
 
 internal interface ISheets
 {
-
     string? GetWorldName(ushort worldID);
-
+    ushort? GetWorldID(string worldname);
 }

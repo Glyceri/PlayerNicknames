@@ -4,6 +4,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus.ContextMenuElements;
 using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
+using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using System;
@@ -17,15 +18,17 @@ internal class ContextMenuHandler : IDisposable
     readonly IPlayerServices PlayerServices;
     readonly IUserList UserList;
     readonly IWindowHandler WindowHandler;
+    readonly INameDatabase Database;
 
     readonly List<IContextMenuElement> ContextMenuElements = new List<IContextMenuElement>();
 
-    public ContextMenuHandler(in DalamudServices dalamudServices, in IPlayerServices playerServices, in IUserList userList, in IWindowHandler windowHandler)
+    public ContextMenuHandler(in DalamudServices dalamudServices, in IPlayerServices playerServices, in IUserList userList, in IWindowHandler windowHandler, INameDatabase database)
     {
         DalamudServices = dalamudServices;
         WindowHandler = windowHandler;
         PlayerServices = playerServices;
         UserList = userList;
+        Database = database;
 
         DalamudServices.ContextMenu.OnMenuOpened += OnOpenMenu;
 
@@ -35,6 +38,7 @@ internal class ContextMenuHandler : IDisposable
     void _Register()
     {
         Register(new TargetContextMenu(in DalamudServices, in UserList, in WindowHandler));
+        Register(new FriendListContextMenu(in DalamudServices, PlayerServices, in Database, WindowHandler));
     }
 
     void Register(IContextMenuElement contextMenuElement)
@@ -46,10 +50,10 @@ internal class ContextMenuHandler : IDisposable
     {
         if (!PlayerServices.Configuration.useContextMenus) return;
 
-        foreach(IContextMenuElement contextMenuElement in ContextMenuElements)
-        {
-            PlayerServices.PetLog.Log($"Context menu for: {contextMenuElement.AddonName}");
+        PlayerServices.PetLog.LogVerbose($"Context menu for: {args.AddonName}");
 
+        foreach (IContextMenuElement contextMenuElement in ContextMenuElements)
+        {
             if (contextMenuElement.AddonName != args.AddonName) continue;
 
             Action<IMenuItemClickedArgs>? callback = contextMenuElement.OnOpenMenu(args);

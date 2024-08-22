@@ -1,10 +1,13 @@
+using PetRenamer.PetNicknames.Services.ServiceWrappers;
+using PetRenamer.PetNicknames.Services.ServiceWrappers.Interfaces;
 using PlayerRenamer;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 
 internal interface IPlayerServices
 {
-    public IPetLog PetLog { get; }
-    public ISheets Sheets { get; }
-    public Configuration Configuration { get; }
+    IPetLog PetLog { get; }
+    ISheets Sheets { get; }
+    Configuration Configuration { get; }
+    IStringHelper StringHelper { get; }
 }

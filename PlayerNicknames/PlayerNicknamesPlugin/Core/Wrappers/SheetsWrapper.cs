@@ -22,4 +22,19 @@ internal class SheetsWrapper : ISheets
 
         return world.InternalName;
     }
+
+    public ushort? GetWorldID(string worldname)
+    {
+        if (worlds == null) return null;
+
+        foreach(World? world in worlds)
+        {
+            if (world == null) continue;
+            if (!string.Equals(world.InternalName, worldname, System.StringComparison.InvariantCultureIgnoreCase)) continue;
+
+            return (ushort)world.RowId;
+        }
+
+        return null;
+    }
 }

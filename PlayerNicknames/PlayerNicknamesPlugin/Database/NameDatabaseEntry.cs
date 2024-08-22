@@ -59,4 +59,15 @@ internal class NameDatabaseEntry : INameDatabaseEntry
     }
 
     public SerializableUser SerializeEntry() => new SerializableUser(this);
+
+    public void UpdateEntry(string username)
+    {
+        SetName(username);
+    }
+
+    public void UpdateEntry(string username, ushort homeworld)
+    {
+        SetName(username);
+        SetHomeworld(homeworld);
+    }
 }
