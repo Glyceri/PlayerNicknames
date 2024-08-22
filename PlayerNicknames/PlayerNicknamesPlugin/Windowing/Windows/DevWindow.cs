@@ -13,6 +13,7 @@ internal class DevWindow : PlayerWindow
     protected override Vector2 MinSize { get; } = new Vector2(350, 136);
     protected override Vector2 MaxSize { get; } = new Vector2(2000, 2000);
     protected override Vector2 DefaultSize { get; } = new Vector2(800, 400);
+    protected override bool HasTopBar { get; } = true;
 
     readonly IUserList UserList;
 
@@ -23,7 +24,7 @@ internal class DevWindow : PlayerWindow
         Open();
     }
 
-    public override void Draw()
+    protected override void OnDraw()
     {
         DrawUserList();
     }

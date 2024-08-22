@@ -16,7 +16,6 @@ using PlayerNicknames.PlayerNicknamesPlugin.Updating.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace PlayerRenamer;
 
@@ -54,8 +53,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
         ImageDatabase = new ImageDatabase(in DalamudServices, PlayerServices, LodestoneNetworkerInterface);
 
         UpdateHandler = new UpdateHandler(DalamudServices, PlayerServices, Database, UserList, LodestoneNetworker, ImageDatabase);
-
-        WindowHandler = new WindowHandler(DalamudServices, PlayerServices, Database, UserList, DirtyHandler);
+        WindowHandler = new WindowHandler(DalamudServices, PlayerServices, Database, UserList, DirtyHandler, ImageDatabase);
 
         ContextMenu = new ContextMenuHandler(in DalamudServices, in PlayerServices, in UserList, in WindowHandler);
 

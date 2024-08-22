@@ -37,8 +37,6 @@ internal class TargetContextMenu : IContextMenuElement
         if (targetUser == null) { DalamudServices.PluginLog.Debug("targetUser null!"); return null; }
         if (targetUser == localUser) { DalamudServices.PluginLog.Debug("targetUser == localuser"); return null; }
 
-        DalamudServices.PluginLog.Debug("TODO: Open window for user: " + targetUser.Name);
-
-        return (a) => WindowHandler.GetWindow<DevWindow>()?.Open();
+        return (a) => WindowHandler.GetWindow<RenameWindow>()?.SetRenameWindow(targetUser.DatabaseEntry, true);
     }
 }

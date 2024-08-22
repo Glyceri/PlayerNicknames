@@ -1,8 +1,10 @@
 ﻿using Dalamud.Interface.Windowing;
+using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Windows;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
+using PlayerNicknames.PlayerNicknamesPlugin.ImageDatabase.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Base;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
@@ -21,10 +23,11 @@ internal class WindowHandler : IWindowHandler
     readonly IUserList UserList;
     readonly IDirtyListener DirtyListener;
     readonly INameDatabase Database;
+    readonly IImageDatabase ImageDatabase;
 
     readonly WindowSystem WindowSystem;
 
-    public WindowHandler(DalamudServices dalamudServices, IPlayerServices playerServices, INameDatabase database, IUserList userList, IDirtyListener dirtyListener)
+    public WindowHandler(DalamudServices dalamudServices, IPlayerServices playerServices, INameDatabase database, IUserList userList, IDirtyListener dirtyListener, IImageDatabase imageDatabase)
     {
         WindowSystem = new WindowSystem("Player Nicknames");
 
@@ -33,6 +36,7 @@ internal class WindowHandler : IWindowHandler
         Database = database;
         UserList = userList;
         DirtyListener = dirtyListener;
+        ImageDatabase = imageDatabase;
 
         DirtyListener.RegisterOnDirtyDatabaseEntry(HandleDirty);
         DirtyListener.RegisterOnDirtyName(HandleDirty);
@@ -44,7 +48,9 @@ internal class WindowHandler : IWindowHandler
 
     void Register()
     {
+        AddWindow(new RenameWindow(this, DalamudServices, PlayerServices, UserList, ImageDatabase));
         AddWindow(new DevWindow(this, DalamudServices, PlayerServices.Configuration, UserList));
+        AddWindow(new KofiWindow(this, DalamudServices, PlayerServices.Configuration));
     }
 
     void AddWindow(PlayerWindow window)
