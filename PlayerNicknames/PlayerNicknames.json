@@ -1,12 +1,17 @@
 {
   "Author": "Glyceri",
   "Name": "Player Nicknames",
-  "Punchline": "A short one-liner that shows up in /xlplugins.",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
+  "Punchline": "Give nicknames to your friends!",
+  "Description": "Give nicknames to your friends!",
+  "InternalName": "PlayerNicknames",
   "ApplicableVersion": "any",
   "Tags": [
-    "sample",
-    "plugin",
-    "goats"
-  ]
+    "Player",
+    "Plugin",
+    "Rename",
+    "Nickname",
+    "Name"
+  ],
+  "IconUrl": "https://github.com/Glyceri/PlayerNicknames/raw/main/icon.png",
+  "RepoUrl": "https://github.com/Glyceri/PlayerNicknames"
 }
