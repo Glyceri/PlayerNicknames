@@ -41,7 +41,7 @@ internal class ContextMenuHandler : IDisposable
     void _Register()
     {
         Register(new TargetContextMenu(in DalamudServices, in UserList, in WindowHandler));
-        Register(new PartyListContextMenu(in DalamudServices, PlayerServices, in Database, WindowHandler, HookHandler.PartyHook));
+        Register(new PartyListContextMenu(in DalamudServices, PlayerServices, in Database, WindowHandler, HookHandler.PartyHook, UserList));
         Register(new FriendListContextMenu(in DalamudServices, PlayerServices, in Database, WindowHandler));
     }
 

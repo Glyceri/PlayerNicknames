@@ -17,7 +17,6 @@ internal class NameEntry : INameEntry
     {
         DirtyCaller = dirtyCaller;
         this.name = name;
-        this.oldName = name;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

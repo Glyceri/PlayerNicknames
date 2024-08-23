@@ -79,7 +79,9 @@ internal class StringHelperWrapper : IStringHelper
         for (int i = 0; i < length; i++)
         {
             baseString = baseString.Replace("[", @"^\[").Replace("]", @"^\]\");
-            baseString = Regex.Replace(baseString, clippedName[i], MakeString(PluginConstants.forbiddenCharacter, i + 1), RegexOptions.IgnoreCase);
+            string regString = clippedName[i];
+            regString = $"\\b" + regString + "\\b";
+            baseString = Regex.Replace(baseString, regString, MakeString(PluginConstants.forbiddenCharacter, i + 1), RegexOptions.IgnoreCase);
         }
 
         if (displayAsNickname)
