@@ -17,6 +17,8 @@ internal class HookHandler : IDisposable
     readonly IDirtyListener DirtyListener;
     readonly INameDatabase Database;
 
+    public IPartyHook PartyHook { get; private set; } = null!;
+
     public HookHandler(DalamudServices services, IUserList userList, IPlayerServices playerServices, IDirtyListener dirtyListener, INameDatabase database)
     {
         DalamudServices = services;
@@ -30,7 +32,9 @@ internal class HookHandler : IDisposable
 
     void _Register()
     {
-        Register(new PartyHook(DalamudServices, UserList, PlayerServices, DirtyListener, Database));
+        PartyHook = new PartyHook(DalamudServices, UserList, PlayerServices, DirtyListener, Database);
+        Register(PartyHook);
+
         Register(new NamePlateHook(DalamudServices, PlayerServices, UserList, DirtyListener));
     }
 

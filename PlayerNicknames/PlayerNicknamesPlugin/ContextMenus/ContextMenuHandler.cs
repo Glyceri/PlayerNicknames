@@ -5,6 +5,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
+using PlayerNicknames.PlayerNicknamesPlugin.Hooking;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using System;
@@ -19,16 +20,18 @@ internal class ContextMenuHandler : IDisposable
     readonly IUserList UserList;
     readonly IWindowHandler WindowHandler;
     readonly INameDatabase Database;
+    readonly HookHandler HookHandler;
 
     readonly List<IContextMenuElement> ContextMenuElements = new List<IContextMenuElement>();
 
-    public ContextMenuHandler(in DalamudServices dalamudServices, in IPlayerServices playerServices, in IUserList userList, in IWindowHandler windowHandler, INameDatabase database)
+    public ContextMenuHandler(in DalamudServices dalamudServices, in IPlayerServices playerServices, in IUserList userList, in IWindowHandler windowHandler, in HookHandler hookHandler, INameDatabase database)
     {
         DalamudServices = dalamudServices;
         WindowHandler = windowHandler;
         PlayerServices = playerServices;
         UserList = userList;
         Database = database;
+        HookHandler = hookHandler;
 
         DalamudServices.ContextMenu.OnMenuOpened += OnOpenMenu;
 
@@ -38,6 +41,7 @@ internal class ContextMenuHandler : IDisposable
     void _Register()
     {
         Register(new TargetContextMenu(in DalamudServices, in UserList, in WindowHandler));
+        Register(new PartyListContextMenu(in DalamudServices, PlayerServices, in Database, WindowHandler, HookHandler.PartyHook));
         Register(new FriendListContextMenu(in DalamudServices, PlayerServices, in Database, WindowHandler));
     }
 

@@ -8,16 +8,22 @@ using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
+using PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.AddonPartyList;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking.HookElements;
 
-internal unsafe class PartyHook : HookableElement
+internal unsafe class PartyHook : HookableElement, IPartyHook
 {
     readonly INameDatabase Database;
+
+    public ulong HoveredContentID { get; private set; }
+    public string HoveredName { get; private set; } = string.Empty;
+    public ushort HoveredHomeworld { get; private set; }
 
     public PartyHook(DalamudServices services, IUserList userList, IPlayerServices petServices, IDirtyListener dirtyListener, INameDatabase database) : base(services, userList, petServices, dirtyListener)
     {
@@ -26,7 +32,7 @@ internal unsafe class PartyHook : HookableElement
 
     public override void Init()
     {
-        DalamudServices.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "_PartyList", LifeCycleUpdate);
+        DalamudServices.AddonLifecycle.RegisterListener(AddonEvent.PostReceiveEvent, "_PartyList", (a, args) => { LifeCycleUpdate(a, args); Refresh(); });
         DalamudServices.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "_PartyList", LifeCycleUpdate);
     }
 
@@ -53,35 +59,39 @@ internal unsafe class PartyHook : HookableElement
     }
 
     ulong[] partyGroup = new ulong[8]; // a party is always 8 in size
-
+    string[] partyName = new string[8];
+    ushort[] partyHomeworld = new ushort[8];
 
     void SetupPartyList()
     {
-        GroupManager* gManager = (GroupManager*)DalamudServices.PartyList.GroupManagerAddress;
-        if (gManager == null) return;
-
         bool isCrossParty = IsCrossParty();
         partyGroup = new ulong[8];
-
-        if (isCrossParty) PlayerServices.PetLog.Log(isCrossParty);
+        partyName = new string[8];
+        partyHomeworld = new ushort[8];
 
         // We can assume partyGroup is 8 in length, and so is the struct with party members, Thanks SE!
         for (int i = 0; i < partyGroup.Length; i++)
         {
             ulong contentID = 0;
-            int? index;
+            string name = string.Empty;
+            ushort homeworld = 0;
+            int ? index;
 
             if (isCrossParty)
             {
-                int count = InfoProxyCrossRealm.Instance()->CrossRealmGroups[0].GroupMemberCount;
-                contentID = InfoProxyCrossRealm.Instance()->CrossRealmGroups[0].GroupMembers[i].ContentId;
+                CrossRealmMember member = InfoProxyCrossRealm.Instance()->CrossRealmGroups[0].GroupMembers[i];
+                contentID = member.ContentId;
+                name = member.NameString;
+                homeworld = (ushort)member.HomeWorld;
 
                 index = GetCrossPartyIndex(contentID);
             }
             else
             {
-                PartyMember member = gManager->MainGroup.PartyMembers[i];
+                PartyMember member = GroupManager.Instance()->MainGroup.PartyMembers[i];
                 contentID = member.ContentId;
+                name = member.NameString;
+                homeworld = member.HomeWorld;
 
                 index = GetNormalPartyIndex(contentID);
             }
@@ -90,6 +100,8 @@ internal unsafe class PartyHook : HookableElement
             if (index < 0 || index >= partyGroup.Length) continue;
 
             partyGroup[index.Value] = contentID;
+            partyName[index.Value] = name;
+            partyHomeworld[index.Value] = homeworld;
         }
     }
 
@@ -147,13 +159,30 @@ internal unsafe class PartyHook : HookableElement
 
     void DrawPartyList(AddonPartyList* partyNode)
     {
+        bool found = false;
         for (int i = 0; i < partyNode->MemberCount; i++)
         {
             if (i >= partyGroup.Length) continue;
 
             PartyListMemberStruct member = partyNode->PartyMembers[i];
+
+            if (member.TargetGlow != null && !found)
+            {
+                if (member.TargetGlow->IsVisible())
+                {
+                    HoveredContentID = partyGroup[i];
+                    HoveredName = partyName[i];
+                    HoveredHomeworld = partyHomeworld[i];
+
+                    if (partyNode->TargetedIndex != i)
+                    {
+                        found = true;
+                    }
+                }
+            }
+
             if (member.Name == null) continue;
-            if (!member.Name->IsVisible()) continue;
+            if (!member.Name->IsVisible()) continue;           
 
             ulong contentID = partyGroup[i];
 
