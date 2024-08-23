@@ -42,6 +42,7 @@ internal class NameEntry : INameEntry
 
         try
         {
+            name = nameRegex.Replace(name, string.Empty);
             name = urlRegex.Replace(name, string.Empty); // Replaces URLS with NOT URls
             name = spaceRegex.Replace(name, string.Empty); // This allows for only 1 space in the string
             name = name.Replace(PluginConstants.forbiddenCharacter.ToString(), string.Empty); // No ^ allowed
@@ -65,6 +66,7 @@ internal class NameEntry : INameEntry
 
     readonly Regex urlRegex = new Regex(@"\b(?:(?:https?|ftp):\/\/)?(?:(?:[a-z0-9\-]+\.)+[a-z]{2,}|localhost)(?::\d{1,5})?(?:\/[^\s]*)?\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     readonly Regex spaceRegex = new Regex(@"(?<=\s.*)\s", RegexOptions.Compiled);
+    readonly Regex nameRegex = new Regex(@"[^a-zA-Z\s']", RegexOptions.Compiled);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetDirty()
