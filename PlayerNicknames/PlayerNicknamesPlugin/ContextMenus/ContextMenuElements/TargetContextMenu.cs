@@ -9,6 +9,7 @@ using System;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.ContextMenus.ContextMenuElements;
 
+// This one will most likely be removed!
 internal class TargetContextMenu : IContextMenuElement
 {
     // Null means context menu didn't come from an addon

@@ -26,7 +26,7 @@ internal class Configuration : IPluginConfiguration
     public bool downloadProfilePictures = true;
     public bool debugModeActive = false;
     public bool openDebugWindowOnStart = false;
-
+    public bool showOnPartyList = true;
 
     public void Initialise(IDalamudPluginInterface playerNicknamesPlugin, INameDatabase database)
     {

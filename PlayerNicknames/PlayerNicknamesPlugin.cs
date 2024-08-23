@@ -18,6 +18,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus;
 using PlayerNicknames.PlayerNicknamesPlugin.Commands;
 using PlayerNicknames.PlayerNicknamesPlugin.Commands.Interfaces;
+using PetRenamer.PetNicknames.Hooking;
 
 namespace PlayerRenamer;
 
@@ -39,6 +40,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
     readonly ILodestoneNetworker LodestoneNetworkerInterface;
     readonly SaveHandler SaveHandler;
     readonly ContextMenuHandler ContextMenu;
+    readonly HookHandler HookHandler;
 
     public PlayerNicknamesPlugin(IDalamudPluginInterface dalamud)
     {
@@ -54,6 +56,7 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
 
         ImageDatabase = new ImageDatabase(in DalamudServices, PlayerServices, LodestoneNetworkerInterface);
 
+        HookHandler = new HookHandler(DalamudServices, UserList, PlayerServices, DirtyHandler, Database);
         UpdateHandler = new UpdateHandler(DalamudServices, PlayerServices, Database, UserList, LodestoneNetworker, ImageDatabase);
         WindowHandler = new WindowHandler(DalamudServices, PlayerServices, Database, UserList, DirtyHandler, ImageDatabase);
 
@@ -73,5 +76,6 @@ public sealed class PlayerNicknamesPlugin : IDalamudPlugin
         UpdateHandler?.Dispose();
         WindowHandler?.Dispose();
         SaveHandler?.Dispose();
+        HookHandler?.Dispose();
     }
 }

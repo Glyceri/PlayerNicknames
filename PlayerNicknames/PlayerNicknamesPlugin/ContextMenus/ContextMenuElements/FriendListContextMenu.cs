@@ -16,7 +16,7 @@ namespace PlayerNicknames.PlayerNicknamesPlugin.ContextMenus.ContextMenuElements
 internal class FriendListContextMenu : IContextMenuElement
 {
     // Null means context menu didn't come from an addon
-    public string? AddonName { get; } = "FriendList";
+    public virtual string? AddonName { get; } = "FriendList";
 
     readonly DalamudServices DalamudServices;
     readonly INameDatabase Database;

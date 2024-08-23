@@ -4,6 +4,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace PlayerNicknames.PlayerNicknamesPlugin.Database;
 
@@ -32,12 +33,14 @@ internal class NameDatabaseEntry : INameDatabaseEntry
         SetHomeworld(homeworld);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetHomeworld(ushort homeworld)
     {
         Homeworld = homeworld;
         HomeworldName = PlayerServices.Sheets.GetWorldName(Homeworld) ?? "...";
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetName(string name)
     {
         Name = name;
@@ -53,18 +56,22 @@ internal class NameDatabaseEntry : INameDatabaseEntry
         MarkDirty();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void MarkDirty()
     {
         DirtyCaller.DirtyEntry(this);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SerializableUser SerializeEntry() => new SerializableUser(this);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateEntry(string username)
     {
         SetName(username);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateEntry(string username, ushort homeworld)
     {
         SetName(username);
