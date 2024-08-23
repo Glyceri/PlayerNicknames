@@ -18,7 +18,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.Windowing.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.ContextMenus;
 using PlayerNicknames.PlayerNicknamesPlugin.Commands;
 using PlayerNicknames.PlayerNicknamesPlugin.Commands.Interfaces;
-using PetRenamer.PetNicknames.Hooking;
+using PlayerNicknames.PlayerNicknamesPlugin.Hooking;
 
 namespace PlayerRenamer;
 

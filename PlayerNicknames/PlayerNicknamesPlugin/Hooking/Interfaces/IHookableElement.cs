@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PetRenamer.PetNicknames.Hooking.Interfaces;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 
 internal interface IHookableElement : IDisposable
 {

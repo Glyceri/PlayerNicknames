@@ -59,6 +59,22 @@ internal class NameDatabase : INameDatabase
         return newEntry;
     }
 
+    public INameDatabaseEntry? GetEntry(string name, ushort homeworld)
+    {
+        int entriesCount = _entries.Count;
+
+        for (int i = 0; i < entriesCount; i++)
+        {
+            INameDatabaseEntry entry = _entries[i];
+            if (entry.Homeworld != homeworld) continue;
+            if (!name.Equals(entry.Name, System.StringComparison.InvariantCultureIgnoreCase)) continue;
+
+            return entry;
+        }
+
+        return null;
+    }
+
     public SerializableUser[] SerializeDatabase()
     {
         List<SerializableUser> users = new List<SerializableUser>();

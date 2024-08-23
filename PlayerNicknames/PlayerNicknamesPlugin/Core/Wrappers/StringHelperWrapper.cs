@@ -3,33 +3,34 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using PetRenamer.PetNicknames.Services.ServiceWrappers.Interfaces;
-using PlayerNicknames.PlayerNicknamesPlugin;
+using PlayerNicknames.PlayerNicknamesPlugin.Services.ServiceWrappers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Struct;
-using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PetRenamer.PetNicknames.Services.ServiceWrappers;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Services.ServiceWrappers;
 
 internal class StringHelperWrapper : IStringHelper
 {
     readonly ISheets Sheets;
+
+    const string leftQuote = "》";
+    const string rightQuote = "《";
 
     public StringHelperWrapper(ISheets sheets)
     {
         Sheets = sheets;
     }
 
-    public unsafe string? ReplaceATKString(AtkTextNode* textNode, INameDatabaseEntry databaseEntry, bool checkForEmptySpace = true)
+    public unsafe string? ReplaceATKString(AtkTextNode* textNode, string newCustomName, IClippedName clippedName, bool displayAsNickname)
     {
         if (textNode == null) return string.Empty;
         string baseText = textNode->NodeText.ToString();
-        string newString = ReplaceStringPart(baseText, databaseEntry, checkForEmptySpace);
-        textNode->NodeText.SetString(newString);
+
+        string newString = DoReplacePart(baseText, newCustomName, clippedName, displayAsNickname);
+        textNode->SetText(newString);
         return newString;
     }
 
@@ -48,12 +49,12 @@ internal class StringHelperWrapper : IStringHelper
 
         byte[] data = Encoding.UTF8.GetBytes(newString);
 
-        atkNode->NodeText.SetString(data);
+        atkNode->SetText(data);
 
         return text;
     }
 
-    public void ReplaceSeString(ref SeString message, INameDatabaseEntry databaseEntry, bool checkForEmptySpace = true)
+    public void ReplaceSeString(ref SeString message, string newCustomName, IClippedName clippedName)
     {
         if (message == null) return;
         for (int i = 0; i < message.Payloads.Count; i++)
@@ -61,66 +62,50 @@ internal class StringHelperWrapper : IStringHelper
             if (message.Payloads[i] is not TextPayload tPayload) continue;
 
             string curString = tPayload.Text!.ToString();
-            tPayload.Text = ReplaceStringPart(curString, databaseEntry, checkForEmptySpace);
+            tPayload.Text = ReplaceStringPart(curString, newCustomName, clippedName);
 
             message.Payloads[i] = tPayload;
         }
     }
 
-    public void ReplaceSeString(ref SeString message, string replaceString, INameDatabaseEntry databaseEntry, bool checkForEmptySpace = true)
+    public string ReplaceStringPart(string baseString, string newCustomName, IClippedName clippedName)
     {
-        if (message == null) return;
-        for (int i = 0; i < message.Payloads.Count; i++)
+        return DoReplacePart(baseString, newCustomName, clippedName, true);
+    }
+
+    public string DoReplacePart(string baseString, string newCustomName, IClippedName clippedName, bool displayAsNickname)
+    {
+        int length = clippedName.Length;
+        for (int i = 0; i < length; i++)
         {
-            if (message.Payloads[i] is not TextPayload tPayload) continue;
-
-            string curString = tPayload.Text!.ToString();
-            tPayload.Text = ReplaceStringPart(curString, databaseEntry, checkForEmptySpace);
-
-            message.Payloads[i] = tPayload;
+            baseString = baseString.Replace("[", @"^\[").Replace("]", @"^\]\");
+            baseString = Regex.Replace(baseString, clippedName[i], MakeString(PluginConstants.forbiddenCharacter, i + 1), RegexOptions.IgnoreCase);
         }
-    }
 
-    public string ReplaceStringPart(string baseString, INameDatabaseEntry databaseEntry, bool checkForEmptySpaces = true)
-    {
-        string baseData = GetBaseName(databaseEntry);
-        if (string.IsNullOrEmpty(baseData)) return baseString;
+        if (displayAsNickname)
+        {
+            newCustomName = MakeQuoted(newCustomName);
+        }
 
-        string? customName = GetCustomName(databaseEntry);
-        if (string.IsNullOrEmpty(customName)) return baseString;
+        if (baseString.Contains('^'))
+        {
+            baseString = baseString.Replace(leftQuote, string.Empty);
+            baseString = baseString.Replace(rightQuote, string.Empty);
+        }
 
-        return DoReplacePart(baseString, baseData, customName, checkForEmptySpaces);
-    }
+        for (int i = length - 1; i >= 0; i--)
+        {
+            baseString = baseString.Replace(MakeString(PluginConstants.forbiddenCharacter, i + 1), newCustomName);
+        }
 
-    public string DoReplacePart(string baseString, string baseName, string customName, bool checkForEmptySpaces)
-    {
-        if (baseName.IsNullOrWhitespace() || customName.IsNullOrWhitespace()) return baseString;
-
-        string newBaseString = baseString;
-        newBaseString = newBaseString.Replace("[", @"^\[").Replace("]", @"^\]\");
-
-        string regString = baseName;
-        if (checkForEmptySpaces) regString = $"\\b" + regString + "\\b";
-
-        newBaseString = Regex.Replace(newBaseString, regString, MakeString(PluginConstants.forbiddenCharacter, 1), RegexOptions.IgnoreCase);
-        baseString = newBaseString.Replace(MakeString(PluginConstants.forbiddenCharacter, 1), customName);
         return baseString;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    string GetBaseName(INameDatabaseEntry entry) => entry.Name;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    string? GetCustomName(INameDatabaseEntry entry) => entry.ActiveEntry.GetName();
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    string? GetOldCustomName(INameDatabaseEntry entry) => entry.ActiveEntry.GetOldName();
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     string MakeString(char c, int count) => new string(c, count);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string MakeTitleCase(string str) => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(str.ToLower());
+
+    public string MakeQuoted(string baseString) => $"{leftQuote}{baseString}{rightQuote}";
 
     public PlayerStruct? ParseStickyPlayerString(string str)
     {

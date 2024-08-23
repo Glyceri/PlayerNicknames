@@ -1,10 +1,10 @@
 ﻿using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Struct;
-using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 
-namespace PetRenamer.PetNicknames.Services.ServiceWrappers.Interfaces;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Services.ServiceWrappers.Interfaces;
 
 internal unsafe interface IStringHelper
 {
@@ -16,10 +16,11 @@ internal unsafe interface IStringHelper
     /// <returns>A player struct if it can parse it</returns>
     PlayerStruct? ParseStickyPlayerString(string str);
 
-    string? ReplaceATKString(AtkTextNode* textNode, INameDatabaseEntry databaseEntry, bool checkForEmptySpace = true);
-    string? ReplaceStringPart(string baseString, INameDatabaseEntry databaseEntry, bool checkForEmptySpaces = true);
-    string DoReplacePart(string baseString, string baseName, string customName, bool checkForEmptySpaces);
-    void ReplaceSeString(ref SeString message, INameDatabaseEntry databaseEntry, bool checkForEmptySpace = true);
+    string? ReplaceATKString(AtkTextNode* textNode, string newCustomName, IClippedName clippedName, bool displayAsNickname);
+    string? ReplaceStringPart(string baseString, string newCustomName, IClippedName clippedName);
+    string DoReplacePart(string baseString, string newCustomName, IClippedName clippedName, bool displayAsNickname);
+    void ReplaceSeString(ref SeString message, string newCustomName, IClippedName clippedName);
     string SetATKString(AtkTextNode* atkNode, string text);
     string SetUtf8String(in Utf8String utf8String, string text);
+    string MakeQuoted(string baseString);
 }

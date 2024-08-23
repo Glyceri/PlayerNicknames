@@ -1,4 +1,4 @@
-﻿using PetRenamer.PetNicknames.Hooking.Interfaces;
+﻿using PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using PlayerNicknames.PlayerNicknamesPlugin.Hooking.HookElements;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 
-namespace PetRenamer.PetNicknames.Hooking;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking;
 internal class HookHandler : IDisposable
 {
     readonly DalamudServices DalamudServices;
@@ -31,6 +31,7 @@ internal class HookHandler : IDisposable
     void _Register()
     {
         Register(new PartyHook(DalamudServices, UserList, PlayerServices, DirtyListener, Database));
+        Register(new NamePlateHook(DalamudServices, PlayerServices, UserList, DirtyListener));
     }
 
     readonly List<IHookableElement> hookableElements = new List<IHookableElement>();

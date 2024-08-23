@@ -19,7 +19,6 @@ internal class NameEntry : INameEntry
         this.name = name;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string? GetName()
     {
         return name;
@@ -72,7 +71,6 @@ internal class NameEntry : INameEntry
         DirtyCaller.DirtyName(this);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string? GetOldName()
     {
         return oldName;

@@ -1,7 +1,7 @@
 ﻿using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.Addon.Lifecycle;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using PetRenamer.PetNicknames.Hooking.Interfaces;
+using PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 using System;
 using PlayerNicknames.PlayerNicknamesPlugin.Hooking;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
@@ -10,7 +10,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 
-namespace PetRenamer.PetNicknames.Hooking.HookTypes;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking.HookTypes;
 
 internal unsafe class SimpleTextHook : ITextHook
 {
@@ -110,7 +110,8 @@ internal unsafe class SimpleTextHook : ITextHook
     {
         string baseText = textNode->NodeText.ToString() ?? string.Empty;
         if (!CheckIfCanFunction(baseText, user)) return;
-        LastAnswer = PlayerServices.StringHelper.ReplaceATKString(textNode, user.DatabaseEntry, false) ?? string.Empty;
+        IClippedName clippedName = PlayerServices.ClippedNameDatabase.GetClippedName(user.DatabaseEntry);
+        //LastAnswer = PlayerServices.StringHelper.ReplaceATKString(textNode, user.CustomName ?? baseText, clippedName) ?? string.Empty;
     }
 
     protected virtual bool CheckIfCanFunction(string text, INamableUser user)

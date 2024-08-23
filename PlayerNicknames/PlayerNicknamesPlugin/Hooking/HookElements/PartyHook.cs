@@ -2,16 +2,14 @@
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using PetRenamer.PetNicknames.Hooking;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
-using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.AddonPartyList;
 
@@ -36,6 +34,16 @@ internal unsafe class PartyHook : HookableElement
     bool CanContinue(AtkUnitBase* baseD) => !(!baseD->IsVisible || !PlayerServices.Configuration.showOnPartyList || baseD == null);
 
     void LifeCycleUpdate(AddonEvent aEvent, AddonArgs args) => Update((AtkUnitBase*)args.Addon);
+    void LifeCycleRefreshUpdate(AddonEvent aEvent, AddonArgs args)
+    {
+        LifeCycleUpdate(aEvent, args);
+        DalamudServices.AddonLifecycle.UnregisterListener(LifeCycleRefreshUpdate);
+    }
+
+    protected override void Refresh()
+    {
+        DalamudServices.AddonLifecycle.RegisterListener(AddonEvent.PostDraw, "_PartyList", LifeCycleRefreshUpdate);
+    }
 
     void Update(AtkUnitBase* baseD)
     {
@@ -45,7 +53,7 @@ internal unsafe class PartyHook : HookableElement
     }
 
     ulong[] partyGroup = new ulong[8]; // a party is always 8 in size
-    string[] lastEdited = new string[8];
+
 
     void SetupPartyList()
     {
@@ -55,16 +63,28 @@ internal unsafe class PartyHook : HookableElement
         bool isCrossParty = IsCrossParty();
         partyGroup = new ulong[8];
 
+        if (isCrossParty) PlayerServices.PetLog.Log(isCrossParty);
+
         // We can assume partyGroup is 8 in length, and so is the struct with party members, Thanks SE!
         for (int i = 0; i < partyGroup.Length; i++)
         {
-            PartyMember member = gManager->MainGroup.PartyMembers[i];
-            ulong contentID = member.ContentId;
-
+            ulong contentID = 0;
             int? index;
 
-            if (isCrossParty) index = GetCrossPartyIndex(contentID);
-            else index = GetNormalPartyIndex(contentID);
+            if (isCrossParty)
+            {
+                int count = InfoProxyCrossRealm.Instance()->CrossRealmGroups[0].GroupMemberCount;
+                contentID = InfoProxyCrossRealm.Instance()->CrossRealmGroups[0].GroupMembers[i].ContentId;
+
+                index = GetCrossPartyIndex(contentID);
+            }
+            else
+            {
+                PartyMember member = gManager->MainGroup.PartyMembers[i];
+                contentID = member.ContentId;
+
+                index = GetNormalPartyIndex(contentID);
+            }
 
             if (index == null) continue;
             if (index < 0 || index >= partyGroup.Length) continue;
@@ -78,8 +98,6 @@ internal unsafe class PartyHook : HookableElement
 
     int? GetCrossPartyIndex(ulong contentID)
     {
-        if (InfoProxyCrossRealm.Instance() == null) return null;
-
         CrossRealmMember* member = InfoProxyCrossRealm.GetMemberByContentId(contentID);
         if (member == null) return null;
 
@@ -116,21 +134,19 @@ internal unsafe class PartyHook : HookableElement
         return null;
     }
 
-    bool refresh = false;
+    List<INameEntry> shouldRefresh = new List<INameEntry>();
 
     protected override void OnNameDatabaseChange(INameEntry nameDatabase)
     {
-        refresh = true;
+        if (!shouldRefresh.Contains(nameDatabase))
+        {
+            shouldRefresh.Add(nameDatabase);
+        }
+        base.OnNameDatabaseChange(nameDatabase);
     }
 
     void DrawPartyList(AddonPartyList* partyNode)
     {
-        if (refresh)
-        {
-            
-            refresh = false;
-        }
-
         for (int i = 0; i < partyNode->MemberCount; i++)
         {
             if (i >= partyGroup.Length) continue;
@@ -143,10 +159,22 @@ internal unsafe class PartyHook : HookableElement
 
             INameDatabaseEntry entry = Database.GetEntry(contentID);
 
+            if (!shouldRefresh.Remove(entry.ActiveEntry))
+            {
+                if (!entry.IsActive) continue;
+            }
 
-            PlayerServices.StringHelper.SetATKString(member.Name, PlayerServices.StringHelper.DoReplacePart(member.Name->NodeText.ToString(), lastEdited[i], entry.Name, false));
-            lastEdited[i] = entry.ActiveEntry.GetName() ?? entry.Name;
-            PlayerServices.StringHelper.ReplaceATKString(member.Name, entry, false);
+            IClippedName clippedName = PlayerServices.ClippedNameDatabase.GetClippedName(entry);
+            IClippedName? oldClippedName = PlayerServices.ClippedNameDatabase.FromCustomName(entry);
+            if (oldClippedName != null)
+            {
+                PlayerServices.StringHelper.ReplaceATKString(member.Name, entry.Name, oldClippedName, false);
+            }
+
+            string? customName = entry.ActiveEntry.GetName();
+            if (customName == null) continue;
+
+            PlayerServices.StringHelper.ReplaceATKString(member.Name, customName, clippedName, true);
         }
     }
 

@@ -1,14 +1,14 @@
-﻿using PetRenamer.PetNicknames.Hooking.Interfaces;
+﻿using PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using System;
 using System.Collections.Generic;
-using PetRenamer.PetNicknames.Hooking.HookTypes;
+using PlayerNicknames.PlayerNicknamesPlugin.Hooking.HookTypes;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 
-namespace PetRenamer.PetNicknames.Hooking;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking;
 
 internal abstract class QuickHookableElement : HookableElement
 {

@@ -27,6 +27,7 @@ internal class Configuration : IPluginConfiguration
     public bool debugModeActive = false;
     public bool openDebugWindowOnStart = false;
     public bool showOnPartyList = true;
+    public bool showOnNameplates = true;
 
     public void Initialise(IDalamudPluginInterface playerNicknamesPlugin, INameDatabase database)
     {

@@ -1,11 +1,11 @@
-﻿using PetRenamer.PetNicknames.Hooking.Interfaces;
+﻿using PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 
-namespace PetRenamer.PetNicknames.Hooking;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking;
 
 internal abstract class HookableElement : IHookableElement
 {
@@ -31,9 +31,10 @@ internal abstract class HookableElement : IHookableElement
     public abstract void Init();
     protected abstract void OnDispose();
 
-    protected virtual void OnNameDatabaseChange(INameEntry nameDatabase) { }
-    protected virtual void OnPettableDatabaseChange(INameDatabase pettableDatabase) { }
-    protected virtual void OnPettableEntryChange(INameDatabaseEntry pettableEntry) { }
+    protected virtual void OnNameDatabaseChange(INameEntry nameDatabase) => Refresh();
+    protected virtual void OnPettableDatabaseChange(INameDatabase pettableDatabase) => Refresh();
+    protected virtual void OnPettableEntryChange(INameDatabaseEntry pettableEntry) => Refresh();
+    protected virtual void Refresh() { }
 
     public void Dispose()
     {

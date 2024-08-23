@@ -5,7 +5,7 @@ using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using System;
 
-namespace PetRenamer.PetNicknames.Hooking.Interfaces;
+namespace PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 
 internal interface ITextHook : IDisposable
 {
