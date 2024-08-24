@@ -56,4 +56,20 @@ internal class UserList : IUserList
         }
         return null;
     }
+
+    public INamableUser? GetUserFromID(uint userId, bool checkActive = false)
+    {
+        if (userId == 0) return null;
+
+        for (int i = 0; i < NamableUsersArraySize; i++)
+        {
+            INamableUser? pUser = NamableUsers[i];
+            if (pUser == null) continue;
+            if (!pUser.IsActive && checkActive) continue;
+            if (pUser.ObjectID != userId) continue;
+
+            return pUser;
+        }
+        return null;
+    }
 }

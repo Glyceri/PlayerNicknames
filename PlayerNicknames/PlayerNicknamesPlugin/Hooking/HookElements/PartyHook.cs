@@ -10,7 +10,6 @@ using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.Hooking.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.AddonPartyList;

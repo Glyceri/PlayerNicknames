@@ -1,7 +1,7 @@
 ﻿using Dalamud.Game.Gui.NamePlate;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using PlayerNicknames.PlayerNicknamesPlugin.Core;
 using PlayerNicknames.PlayerNicknamesPlugin.Core.Interfaces;
-using PlayerNicknames.PlayerNicknamesPlugin.Database.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.DirtySystem.Interfaces;
 using PlayerNicknames.PlayerNicknamesPlugin.NicknamableUsers.Interfaces;
 using System.Collections.Generic;
@@ -24,14 +24,7 @@ internal class NamePlateHook : HookableElement
         DalamudServices.NameplateGUI.OnNamePlateUpdate -= OnPlateUpdate;
     }
 
-    protected override void OnNameDatabaseChange(INameEntry nameDatabase) => Refresh();
-    protected override void OnPettableDatabaseChange(INameDatabase pettableDatabase) => Refresh();
-    protected override void OnPettableEntryChange(INameDatabaseEntry pettableEntry) => Refresh();
-
-    void Refresh()
-    {
-        DalamudServices.NameplateGUI.RequestRedraw();
-    }
+    protected override void Refresh() => DalamudServices.NameplateGUI.RequestRedraw();
 
     void OnPlateUpdate(INamePlateUpdateContext context, IReadOnlyList<INamePlateUpdateHandler> handlers)
     {
@@ -46,19 +39,37 @@ internal class NamePlateHook : HookableElement
         }
     }
 
-    void OnSpecificPlateUpdate(INamePlateUpdateHandler handler)
+    unsafe void OnSpecificPlateUpdate(INamePlateUpdateHandler handler)
     {
-        if (handler.NamePlateKind != NamePlateKind.PlayerCharacter) return;
-
         if (handler.GameObject == null) return;
         nint address = handler.GameObject.Address;
 
-        INamableUser? user = UserList.GetUser(address);
+        INamableUser? user = handler.NamePlateKind switch
+        {
+            NamePlateKind.PlayerCharacter => HandleAsPlayer(address),
+            NamePlateKind.EventNpcCompanion => HandleAsCompanion((Companion*)address),
+            NamePlateKind.BattleNpcFriendly => HandleAsPet((BattleChara*)address),
+            _ => null
+        };
         if (user == null) return;
 
         string? customName = user.CustomName;
         if (customName == null) return;
 
-        handler.NameParts.Text = PlayerServices.StringHelper.MakeQuoted(customName);
+        string quotedLine = PlayerServices.StringHelper.MakeQuoted(customName);
+
+        if (handler.NamePlateKind == NamePlateKind.PlayerCharacter)
+        {
+            handler.NameParts.Text = quotedLine;
+        }
+        else
+        {
+            handler.TitleParts.Text = quotedLine;
+        }
     }
+
+    INamableUser? HandleAsPlayer(nint playerAddress) => UserList.GetUser(playerAddress);
+    unsafe INamableUser? HandleAsCompanion(Companion* companion) => UserList.GetUserFromID(companion->CompanionOwnerId);
+    unsafe INamableUser? HandleAsPet(BattleChara* battleChara) => UserList.GetUserFromID(battleChara->OwnerId);
+  
 }

@@ -16,8 +16,11 @@ internal class StringHelperWrapper : IStringHelper
 {
     readonly ISheets Sheets;
 
-    const string leftQuote = "》";
-    const string rightQuote = "《";
+    //const string leftQuote = "》";
+    //const string rightQuote = "《";
+
+    const string leftQuote = "„";
+    const string rightQuote = "“";
 
     public StringHelperWrapper(ISheets sheets)
     {
